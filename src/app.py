@@ -9,8 +9,9 @@ from utils import calculate_sha256_bytes
 from recommend import get_recommendation
 
 # Configuration
-MODEL_PATH = '../models/agriguard_model.pth'
-CLASS_INDICES_PATH = '../models/class_indices.json'
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+MODEL_PATH = os.path.join(BASE_DIR, '../models/agriguard_model.pth')
+CLASS_INDICES_PATH = os.path.join(BASE_DIR, '../models/class_indices.json')
 
 st.set_page_config(page_title="AgriGuard", page_icon="🌿")
 
@@ -48,7 +49,7 @@ uploaded_file = st.file_uploader("Choose a leaf image...", type=["jpg", "jpeg", 
 if uploaded_file is not None:
     # Display Image
     image = Image.open(uploaded_file).convert('RGB')
-    st.image(image, caption='Uploaded Image', use_column_width=True)
+    st.image(image, caption='Uploaded Image', use_container_width=True)
     
     # Integrity Check
     uploaded_file.seek(0)

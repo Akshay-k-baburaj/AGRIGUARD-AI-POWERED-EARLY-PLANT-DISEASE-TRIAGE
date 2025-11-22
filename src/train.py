@@ -11,11 +11,12 @@ import ssl
 ssl._create_default_https_context = ssl._create_unverified_context
 
 # Configuration
-DATA_DIR = '../data'
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DATA_DIR = os.path.join(BASE_DIR, '../data')
 TRAIN_DIR = os.path.join(DATA_DIR, 'train')
 VAL_DIR = os.path.join(DATA_DIR, 'valid')
-MODEL_SAVE_PATH = '../models/agriguard_model.pth'
-CLASS_INDICES_PATH = '../models/class_indices.json'
+MODEL_SAVE_PATH = os.path.join(BASE_DIR, '../models/agriguard_model.pth')
+CLASS_INDICES_PATH = os.path.join(BASE_DIR, '../models/class_indices.json')
 IMG_SIZE = 224
 BATCH_SIZE = 32
 EPOCHS = 1
@@ -78,15 +79,7 @@ def train():
         correct = 0
         total = 0
         
-        # Limit steps for demo
-        steps = 0
-        max_steps = 10 
-
-        for images, labels in train_loader:
-            if steps >= max_steps:
-                break
-            steps += 1
-
+        for i, (images, labels) in enumerate(train_loader):
             images = images.to(device)
             labels = labels.to(device)
 
@@ -101,8 +94,8 @@ def train():
             total += labels.size(0)
             correct += (predicted == labels).sum().item()
             
-            if steps % 5 == 0:
-                print(f"Epoch [{epoch+1}/{EPOCHS}], Step [{steps}/{max_steps}], Loss: {loss.item():.4f}")
+            if (i + 1) % 10 == 0:
+                print(f"Epoch [{epoch+1}/{EPOCHS}], Step [{i+1}/{len(train_loader)}], Loss: {loss.item():.4f}")
 
         print(f"Epoch [{epoch+1}/{EPOCHS}] Training Accuracy: {100 * correct / total:.2f}%")
 
