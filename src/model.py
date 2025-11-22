@@ -13,9 +13,13 @@ def build_model(num_classes):
     for param in model.parameters():
         param.requires_grad = False
         
-    # Replace the classifier head
+    # Replace the classifier head with dropout for regularization
     # MobileNetV2 classifier is a Sequential block with Dropout and Linear
-    model.classifier[1] = nn.Linear(model.last_channel, num_classes)
+    # Keep dropout at 0.2 for regularization
+    model.classifier = nn.Sequential(
+        nn.Dropout(0.2),  # Dropout for regularization
+        nn.Linear(model.last_channel, num_classes)
+    )
     
     return model
 
