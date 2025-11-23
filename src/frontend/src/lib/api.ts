@@ -62,6 +62,11 @@ export const api = {
         });
 
         if (!response.ok) {
+            if (response.status === 401) {
+                localStorage.removeItem("token");
+                window.location.href = "/login";
+                throw new Error("Session expired. Please login again.");
+            }
             const error = await response.json();
             throw new Error(error.detail || "Analysis failed");
         }
@@ -82,6 +87,11 @@ export const api = {
         });
 
         if (!response.ok) {
+            if (response.status === 401) {
+                localStorage.removeItem("token");
+                window.location.href = "/login";
+                throw new Error("Session expired. Please login again.");
+            }
             throw new Error("Failed to fetch history");
         }
 
