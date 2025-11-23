@@ -1,4 +1,6 @@
-const API_URL = "http://10.10.43.61:8000";
+import { calculateFileHash } from "./utils";
+
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
 export const api = {
     async login(username, password) {
@@ -19,8 +21,6 @@ export const api = {
         localStorage.setItem("token", data.access_token);
         return data;
     },
-
-
 
     async register(userData) {
         const response = await fetch(`${API_URL}/auth/register`, {
@@ -45,6 +45,10 @@ export const api = {
             throw new Error("Not authenticated");
         }
 
+        const fileHash = await calculateFileHash(file);
+        console.log(`🔒 [SECURITY] Calculated Image Hash (SHA-256): ${fileHash}`);
+        console.log(`🚀 [SECURITY] Sending hash in 'x-file-hash' header for verification...`);
+
         const formData = new FormData();
         formData.append("file", file);
 
@@ -52,6 +56,7 @@ export const api = {
             method: "POST",
             headers: {
                 "Authorization": `Bearer ${token}`,
+                "x-file-hash": fileHash,
             },
             body: formData,
         });

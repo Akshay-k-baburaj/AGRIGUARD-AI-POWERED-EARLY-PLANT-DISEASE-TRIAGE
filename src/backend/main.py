@@ -144,11 +144,19 @@ async def analyze_plant(
     
     # Integrity Check: If client provided a hash, verify it matches
     # This ensures the file wasn't corrupted in transit
-    if x_file_hash and x_file_hash.lower() != file_hash.lower():
-        raise HTTPException(
-            status_code=400, 
-            detail="Data Integrity Error: File hash mismatch. The file may have been corrupted during transfer."
-        )
+    if x_file_hash:
+        print(f"🔒 [SECURITY] Integrity Check Initiated")
+        print(f"   Client Hash: {x_file_hash}")
+        print(f"   Server Hash: {file_hash}")
+        
+        if x_file_hash.lower() != file_hash.lower():
+            print(f"❌ [SECURITY] Integrity Check FAILED! Hashes do not match.")
+            raise HTTPException(
+                status_code=400, 
+                detail="Data Integrity Error: File hash mismatch. The file may have been corrupted during transfer."
+            )
+        else:
+            print(f"✅ [SECURITY] Integrity Check PASSED. File is authentic.")
 
     try:
         image = Image.open(io.BytesIO(contents)).convert('RGB')

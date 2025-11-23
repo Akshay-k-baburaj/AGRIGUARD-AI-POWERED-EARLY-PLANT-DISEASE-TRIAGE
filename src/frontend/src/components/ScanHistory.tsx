@@ -13,9 +13,10 @@ import { Loader2 } from "lucide-react";
 
 interface ScanHistoryProps {
     refreshTrigger?: number;
+    onError?: (error: any) => void;
 }
 
-const ScanHistory = ({ refreshTrigger = 0 }: ScanHistoryProps) => {
+const ScanHistory = ({ refreshTrigger = 0, onError }: ScanHistoryProps) => {
     const [history, setHistory] = useState<AnalysisResult[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -45,6 +46,9 @@ const ScanHistory = ({ refreshTrigger = 0 }: ScanHistoryProps) => {
                     setHistory(mappedHistory);
                 } catch (error) {
                     console.error("Failed to fetch history", error);
+                    if (onError) {
+                        onError(error);
+                    }
                 } finally {
                     setIsLoading(false);
                 }

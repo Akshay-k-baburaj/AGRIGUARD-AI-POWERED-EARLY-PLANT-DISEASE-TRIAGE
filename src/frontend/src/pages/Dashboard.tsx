@@ -62,7 +62,15 @@ const Dashboard = () => {
                     </section>
 
                     <section>
-                        <ScanHistory refreshTrigger={refreshTrigger} />
+                        <ScanHistory
+                            refreshTrigger={refreshTrigger}
+                            onError={(error) => {
+                                if (error.message.includes("401") || error.message.includes("authenticated")) {
+                                    api.logout();
+                                    navigate("/login");
+                                }
+                            }}
+                        />
                     </section>
                 </div>
             </main>
